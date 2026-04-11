@@ -1,5 +1,6 @@
 import requests
 from typing import Optional, Generator, List, Union, Any
+from json import JSONDecodeError
 
 class GeoSampaWFSFetcher:
     """
@@ -67,8 +68,10 @@ class GeoSampaWFSFetcher:
         
         if response.status_code != 200:
             response.raise_for_status()
-        
-        return response.json()
+        try:
+            return response.json()
+        except JSONDecodeError:
+            raise ValueError(f"Response content is not valid JSON: {response.text}")
     
     def fetch_feature_batches(self, nome_camada:str, output_format:str="application/json", count:Optional[int]=None, 
                        start_index:Optional[int]=None, **query_parameters)->Generator[List[dict], None, None]:
