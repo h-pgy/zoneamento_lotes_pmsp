@@ -90,12 +90,13 @@ class GeoSampaWFSFetcher:
             
             qtd_features = len(features)
             self.features_fetched_count += qtd_features
+            self.start_index += qtd_features
             yield features
             
             if self.features_fetched_count >= total_matched:
                 break
                 
-            self.start_index += qtd_features
+            
 
     def __call__(self, nome_camada:str, output_format:str="application/json", count:Optional[int]=None, 
                        start_index:Optional[int]=None, **query_parameters)-> Generator[List[dict[str, Any]], None, None]:
