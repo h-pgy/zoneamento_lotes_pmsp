@@ -3,12 +3,15 @@ import pandas as pd
 from pathlib import Path
 from utils.io.path import data_path, output_path
 
-def save_parquet(gdf: gpd.GeoDataFrame, filename: str, subfolder: str = "") -> Path:
+def save_parquet(data: gpd.GeoDataFrame|pd.DataFrame, filename: str, subfolder: str = "", gdf:bool=True, output:bool=False) -> Path:
     # Garante a extensão .parquet
     if not filename.endswith(".parquet"):
         filename += ".parquet"
-    path = data_path(filename, subfolder)
-    gdf.to_parquet(path)
+    path = output_path(filename, subfolder) if output else data_path(filename, subfolder)
+    if gdf:
+        data.to_parquet(path)
+    else:
+        data.to_parquet(path)
     return path
 
 def load_parquet(filename: str, subfolder: str = "", gdf:bool=True, output:bool=False) -> gpd.GeoDataFrame|pd.DataFrame:
