@@ -14,8 +14,11 @@ if df_lote is not None:
     if df_lote['id_pol_lote'].nunique() > 1:
         st.warning("Mais de um polígono de lote encontrado. Há de fato alguns casos de lotes com mais de um polígono.")
     for id_pol_lote in df_lote['id_pol_lote'].unique():
-        
-        renderizar_mapa_perimetros(id_pol_lote, df_lote)
+
+        with st.container(border=True):
+            st.subheader(f"Perímetros de Zoneamento para o Polígono {id_pol_lote}")
+            df_lote_poligono = df_lote[df_lote['id_pol_lote'] == id_pol_lote]
+            renderizar_mapa_perimetros(id_pol_lote, df_lote_poligono)
 
 
 

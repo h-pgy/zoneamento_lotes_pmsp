@@ -69,11 +69,10 @@ class PerimetrosMapRenderer:
             )
         ).add_to(mapa)
 
-    def __call__(self, id_pol_lote: str, df_lote_contexto: pd.DataFrame) -> None:
+    def __call__(self, id_pol_lote: str, df_lote__poligono: pd.DataFrame) -> None:
         gdf_lote = get_lote_polygon(id_pol_lote)
         
-        filtro_poligono = df_lote_contexto[df_lote_contexto['id_pol_lote'] == id_pol_lote]
-        ids_perimetros = self._extrair_ids_perimetros(filtro_poligono)
+        ids_perimetros = self._extrair_ids_perimetros(df_lote__poligono)
 
         if not ids_perimetros:
             st.info(f"Nenhum perímetro de zoneamento para o polígono {id_pol_lote}.")
@@ -88,5 +87,4 @@ class PerimetrosMapRenderer:
         
         folium.LayerControl().add_to(mapa_final)
         
-        st.markdown(f"#### Mapa do Polígono: {id_pol_lote}")
         st_folium(mapa_final, width=700, height=500, returned_objects=[], key=f"map_{id_pol_lote}")

@@ -98,8 +98,29 @@ class LoteSearchUI:
 
     def _exibir_resultados(self) -> None:
         if self.dataframe_resultado is not None and not self.dataframe_resultado.empty:
-            with st.expander("Acesse os microdados desse lote", expanded=True):
-                st.dataframe(self.dataframe_resultado, width='content')
+            with st.container(border=True):
+                st.success('Lote encontrado com sucesso!')
+                primeiro_registro = self.dataframe_resultado.iloc[0]
+                print(self.dataframe_resultado.columns)
+                coluna_identificadores, coluna_tipo = st.columns([3, 1])
+                
+                with coluna_identificadores:
+                    setor_val = str(primeiro_registro["cd_setor_fiscal"]).zfill(3)
+                    quadra_val = str(primeiro_registro["cd_quadra_fiscal"]).zfill(4)
+                    lote_val = str(primeiro_registro["cd_lote"]).zfill(3)
+                    condo_val = str(primeiro_registro["cd_condominio"]).zfill(2)
+                    
+                    st.markdown(f"**SQL:** {setor_val}.{quadra_val}.{lote_val}-{condo_val}")
+                
+                with coluna_tipo:
+                    tipo_lote = primeiro_registro["cd_tipo_lote"]
+                    st.badge(f"Lote de tipo {self.MAPEAMENTO_TIPOS[tipo_lote]}")
+
+                with st.expander("Acesse os microdados desse lote", expanded=True):
+                    st.dataframe(
+                        self.dataframe_resultado, 
+                        use_container_width=True
+                    )
 
     def render_pipeline(self) -> pd.DataFrame | None:
 
