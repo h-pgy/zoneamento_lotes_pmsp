@@ -16,15 +16,15 @@ class LoteDataFilter:
         condominio_str = str(cd_condominio).zfill(2)
         return f"{setor_str}.{quadra_str}.{lote_str}-{condominio_str}"
 
-    def _buscar_registros_lotes(self, sql_formatado: str) -> pd.DataFrame:
-        resultado_filtrado = self.dataframe_lotes[self.dataframe_lotes["sql"] == sql_formatado]
-        self.ultimo_sql_buscado = sql_formatado
+    def _buscar_registros_lotes(self, sql_formatado: str, cd_tipo_lote: str) -> pd.DataFrame:
+        resultado_filtrado = self.dataframe_lotes[(self.dataframe_lotes["sql"] == sql_formatado) \
+                                                  & (self.dataframe_lotes["cd_tipo_lote"] == cd_tipo_lote)]
+        self.ultimo_sql_buscado = sql_formatado + f" (Tipo Lote: {cd_tipo_lote})"
         return resultado_filtrado.reset_index(drop=True)
     
-    def pipeline(self, cd_setor: int, cd_quadra: int, cd_lote: int, cd_condominio: int = 0) -> pd.DataFrame:
+    def pipeline(self, cd_setor: int, cd_quadra: int, cd_lote: int, cd_condominio: int = 0, cd_tipo_lote='F') -> pd.DataFrame:
         sql_gerado = self._gerar_sql(cd_setor, cd_quadra, cd_lote, cd_condominio)
-        return self._buscar_registros_lotes(sql_gerado)
-
-    def __call__(self, cd_setor: int, cd_quadra: int, cd_lote: int, cd_condominio: int = 0) -> pd.DataFrame:
+        return self._buscar_registros_lotes(sql_gerado, cd_tipo_lote)
+    def __call__(self, cd_setor: int, cd_quadra: int, cd_lote: int, cd_condominio: int = 0, cd_tipo_lote='F') -> pd.DataFrame:
         
-        return self.pipeline(cd_setor, cd_quadra, cd_lote, cd_condominio)
+        return self.pipeline(cd_setor, cd_quadra, cd_lote, cd_condominio, cd_tipo_lote)
