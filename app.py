@@ -15,8 +15,7 @@ if df_lote is not None:
         st.warning("Mais de um polígono de lote encontrado. Há de fato alguns casos de lotes com mais de um polígono.")
     for id_pol_lote in df_lote['id_pol_lote'].unique():
         
-        visualizador = LoteVisualizer3D(df_lote)
-        visualizador.render(id_pol_lote)
+        pass
 
 
 
