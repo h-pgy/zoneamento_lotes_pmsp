@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 from ..search_utils import LoteDataFilter
 from typing import Dict, Any
+from dashboard.components.results_lote import LoteResultadosUI
+
 
 class LoteSearchUI:
     MAPEAMENTO_TIPOS = {
@@ -17,6 +19,8 @@ class LoteSearchUI:
         self.parametros_busca: Dict[str, Any] = {}
         self.dataframe_resultado: pd.DataFrame | None = None
         self.lista_tipos_lote = self._definir_opcoes_tipo_lote()
+
+        self.exibir_resultados = LoteResultadosUI()
 
     def _map_tipo_lote(self, tipo_lote: str, inverted: bool = False) -> str:
         if inverted:
@@ -96,39 +100,14 @@ class LoteSearchUI:
         if self.dataframe_resultado is not None and self.dataframe_resultado.empty:
             st.warning(f"Nenhum registro encontrado para o SQL informado: {self.search_lote.ultimo_sql_buscado}.")
 
-    def _exibir_resultados(self) -> None:
-        if self.dataframe_resultado is not None and not self.dataframe_resultado.empty:
-            with st.container(border=True):
-                st.success('Lote encontrado com sucesso!')
-                primeiro_registro = self.dataframe_resultado.iloc[0]
-                print(self.dataframe_resultado.columns)
-                coluna_identificadores, coluna_tipo = st.columns([3, 1])
-                
-                with coluna_identificadores:
-                    setor_val = str(primeiro_registro["cd_setor_fiscal"]).zfill(3)
-                    quadra_val = str(primeiro_registro["cd_quadra_fiscal"]).zfill(4)
-                    lote_val = str(primeiro_registro["cd_lote"]).zfill(3)
-                    condo_val = str(primeiro_registro["cd_condominio"]).zfill(2)
-                    
-                    st.markdown(f"**SQL:** {setor_val}.{quadra_val}.{lote_val}-{condo_val}")
-                
-                with coluna_tipo:
-                    tipo_lote = primeiro_registro["cd_tipo_lote"]
-                    st.badge(f"Lote de tipo {self.MAPEAMENTO_TIPOS[tipo_lote]}")
-
-                with st.expander("Acesse os microdados desse lote", expanded=True):
-                    st.dataframe(
-                        self.dataframe_resultado, 
-                        use_container_width=True
-                    )
-
     def render_pipeline(self) -> pd.DataFrame | None:
 
         with st.container(border=True):
             st.subheader("Busca de Lote Fiscal")
             self.parametros_busca = self._renderizar_campos_input()
             self._executar_pesquisa(self.parametros_busca)
-        self._exibir_resultados()
+        if self.dataframe_resultado is not None:
+            self.exibir_resultados(self.dataframe_resultado)
 
         return self.dataframe_resultado
 
