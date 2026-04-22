@@ -19,3 +19,8 @@ def data_path(fname: str, subfolder: str = "") -> Path:
 def output_path(fname: str, subfolder: str = "") -> Path:
     full_dir = OUTPUT_DIR / subfolder
     return join_and_ensure(full_dir, fname)
+
+def static_output_path(fname: str) -> Path:
+    static = join_and_ensure(OUTPUT_DIR, 'static')
+
+    return join_and_ensure(static, fname)
